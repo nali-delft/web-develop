@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Layout with Dropdown and Image Buttons</title>
+    <style>
+        /* 通用样式 */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        /* 布局样式 */
+        #container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* 头部区域样式 */
+        #header-bar {
+            display: flex;
+            align-items: center;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        /* 图标和标题样式 */
+        #header-bar img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        #header-bar h1 {
+            font-size: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 菜单栏样式 */
+        #menu-bar {
+            background-color: #f4f4f4;
+            padding: 10px;
+            display: flex;
+            justify-content: flex-start;
+            /* 靠左对齐 */
+            border-bottom: 1px solid #ccc;
+        }
+
+        /* 菜单项样式 */
+        .menu-item {
+            position: relative;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+
+        /* 下拉菜单样式 */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            padding: 8px 16px;
+            display: block;
+            color: black;
+            text-decoration: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        /* 显示下拉菜单 */
+        .menu-item:hover .dropdown-content {
+            display: block;
+        }
+
+        /* 图形按钮区样式 */
+        #button-bar {
+            background-color: #ddd;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: flex-start;
+            position: relative; /* 保证文字能够相对于父元素定位 */
+        }
+
+        #button-bar img {
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+        /* 图标样式 */
+        .icon-container {
+            position: relative;
+            display: inline-block;
+            margin-right: 20px;
+            text-align: center;
+        }
+
+        .icon-container img {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        /* 隐藏悬浮文本 */
+        .hover-text {
+            display: none;
+            position: absolute;
+            top: 50px; /* 相对于图片的位置 */
+            left: 0;
+            width: 100px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1;
+        }
+
+        /* 悬浮时显示文本 */
+        .icon-container:hover .hover-text {
+            display: block;
+        }
+        /* 中间区域布局 */
+        #main-content {
+            display: flex;
+            flex: 1;
+        }
+
+        /* 左侧功能菜单栏 */
+        #sidebar {
+            width: 250px;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-right: 1px solid #ccc;
+        }
+
+        #sidebar h3 {
+            margin-top: 0;
+        }
+
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #sidebar ul li {
+            cursor: pointer;
+            padding: 5px 0;
+        }
+
+        #sidebar ul li:hover {
+            background-color: #ddd;
+        }
+
+        /* 右侧图形显示区域 */
+        #canvas-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        #myCanvas {
+            border: 1px solid black;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 头部区域，显示图标和标题 -->
+    <div id="header-bar">
+        <img src="icons/cogo_logo.png" alt="Logo">
+        <h1>Na Mesh Generator</h1>
+    </div>
+
+    <!-- 最上方菜单栏 -->
+    <div id="menu-bar">
+        <!-- File 菜单 -->
+        <div class="menu-item">
+            File
+            <div class="dropdown-content">
+                <a href="#">Open</a>
+                <a href="#">Save</a>
+                <a href="#">Save As</a>
+            </div>
+        </div>
+
+        <!-- Edit 菜单 -->
+        <div class="menu-item">
+            Edit
+            <div class="dropdown-content">
+                <a href="#">Undo</a>
+                <a href="#">Redo</a>
+                <a href="#">Cut</a>
+            </div>
+        </div>
+
+        <!-- View 菜单 -->
+        <div class="menu-item">
+            View
+            <div class="dropdown-content">
+                <a href="#">Zoom In</a>
+                <a href="#">Zoom Out</a>
+                <a href="#">Reset View</a>
+            </div>
+        </div>
+
+        <!-- Tools 菜单 -->
+        <div class="menu-item">
+            Tools
+            <div class="dropdown-content">
+                <a href="#">Options</a>
+                <a href="#">Settings</a>
+            </div>
+        </div>
+
+        <!-- Help 菜单 -->
+        <div class="menu-item">
+            Help
+            <div class="dropdown-content">
+                <a href="#">Documentation</a>
+                <a href="#">About</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第二行图形按钮（使用图片） -->
+    <div id="button-bar">
+        <div class="icon-container">
+            <img src="icons/load_fig.png" alt="Load figure">
+            <div class="hover-text">Load figure</div>
+        </div>
+        <div class="icon-container">
+            <img src="icons/add_point.png" alt="Add point">
+            <div class="hover-text">Add point</div>
+        </div>
+        <div class="icon-container">
+            <img src="icons/delete_point.png" alt="Delete point">
+            <div class="hover-text">Delete point</div>
+        </div>
+        <div class="icon-container">
+            <img src="icons/end.png" alt="End">
+            <div class="hover-text">End</div>
+        </div>
+        <div class="icon-container">
+            <img src="icons/clear.png" alt="Clear figure">
+            <div class="hover-text">Clear figure</div>
+        </div>
+        <div class="icon-container">
+            <img src="icons/bspline.png" alt="B-spline">
+            <div class="hover-text">B-spline</div>
+        </div>
+        <div class="icon-container">
+            <img src="icons/mesh_gen.png" alt="Mesh generator">
+            <div class="hover-text">Mesh generator</div>
+        </div>
+    </div>
+
+    <!-- 中间部分 -->
+    <div id="container">
+        <div id="main-content">
+            <!-- 左侧功能菜单栏 -->
+            <div id="sidebar">
+                <h3>Airfoil Database</h3>
+                <ul>
+                    <li id="fx76">FX 76-MP-140</li>
+                    <li id="rae2822">RAE2822</li>
+                    <li>NACA</li>
+                    <li>RC Glider</li>
+                    <li>mh49</li>
+                </ul>
+                <h3>Loaded airfoil(s)</h3>
+                <p>mh49.dat<br>RAE2822.dat</p>
+            </div>
+
+            <!-- 右侧图形显示区 -->
+            <div id="canvas-container">
+                <canvas id="myCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 自动调整 Canvas 尺寸以铺满容器
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        // 初始化 Canvas 尺寸
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 点击不同按钮，显示不同图形
+        document.getElementById('fx76').addEventListener('click', function () {
+            drawAirfoilFX76();
+        });
+
+        document.getElementById('rae2822').addEventListener('click', function () {
+            drawAirfoilRAE2822();
+        });
+
+        function drawAirfoilFX76() {
+            // 清空 Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制机翼轮廓 (FX 76-MP-140 示例)
+            ctx.beginPath();
+            ctx.moveTo(50, canvas.height / 2);  // 起点
+            ctx.quadraticCurveTo(canvas.width / 2, 0, canvas.width - 50, canvas.height / 2);  // 上半部分
+            ctx.quadraticCurveTo(canvas.width / 2, canvas.height, 50, canvas.height / 2);  // 下半部分
+            ctx.closePath();
+            ctx.strokeStyle = 'blue';
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(0, 0, 255, 0.3)';
+            ctx.fill();
+        }
+
+        function drawAirfoilRAE2822() {
+            // 清空 Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制机翼轮廓 (RAE2822 示例)
+            ctx.beginPath();
+            ctx.moveTo(50, canvas.height / 2);  // 起点
+            ctx.quadraticCurveTo(canvas.width / 2, 0, canvas.width - 50, canvas.height / 2);  // 上半部分
+            ctx.quadraticCurveTo(canvas.width / 2, canvas.height, 50, canvas.height / 2);  // 下半部分
+            ctx.closePath();
+            ctx.strokeStyle = 'green';
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+            ctx.fill();
+        }
+    </script>
+
+</body>
+
+</html>
